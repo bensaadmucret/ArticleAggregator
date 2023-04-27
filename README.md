@@ -4,7 +4,7 @@ Cette application permet de collecter des articles à partir de deux sources dif
 
 ## Installation
 
-1.  Assurez-vous que PHP 7.4 ou supérieur est installé sur votre système.
+1.  Assurez-vous que PHP 8 ou supérieur est installé sur votre système.
 2.  Clonez ce dépôt ou téléchargez-le sous forme d'archive.
 3.  Copiez le fichier `.env.example` en `.env` et modifiez les valeurs des variables en fonction de votre configuration.
 4.  Exécutez `composer install` pour installer les dépendances.
