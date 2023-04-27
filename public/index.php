@@ -2,8 +2,9 @@
 
 use Alltricks\ArticleAggregator;
 
-// Inclusion de l'autoloader de composer pour charger les classes automatiquement
 require __DIR__ . '/../vendor/autoload.php';
+
+
 
 // Initialisation de la classe ArticleAggregato
 $aggregator = new ArticleAggregator();
@@ -16,6 +17,8 @@ $aggregator->appendRss('CNN', 'http://rss.cnn.com/rss/edition.rss');
 // Ajout des sources de la base de données à l'agrégateur
 $aggregator->appendDatabase(1);
 $aggregator->appendDatabase(2);
+$aggregator->appendDatabase(3);
+$aggregator->appendDatabase(4);
 
 ?>
 <!DOCTYPE html>
@@ -31,13 +34,10 @@ $aggregator->appendDatabase(2);
 </head>
 
 <body>
-    <header>
-    <h1>Derniers articles</h1>
-    </header>
-
     <main>
         <section>
-           
+        <h1>Derniers articles</h1>
+           <div class="container">
             <?php foreach ($aggregator as $article): ?>
             <div class="card">
                 <div class="card-header">Titre de la carte</div>
@@ -45,9 +45,10 @@ $aggregator->appendDatabase(2);
                     <?php echo '<h2>' . $article->name . '</h2>'; ?>
                     <?php echo '<p>' . $article->content . '</p>'; ?>
                 </div>
-                <div class="card-footer"><?php echo '<p><em>Source: ' . $article->sourceName . '</em></p>'; ?></div>
+                <div class="card-footer"><?php echo '<p><em>Source: ' . $article->source_id . '</em></p>'; ?></div>
             </div>
             <?php endforeach ?>
+            </div>
         </section>
     </main>
 

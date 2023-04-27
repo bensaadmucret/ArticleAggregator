@@ -1,14 +1,20 @@
 <?php
 
-declare (strict_types=1);
+declare(strict_types=1);
 
 namespace Alltricks;
 
 use PDO;
 use Iterator;
+use Alltricks\dbConnexion;
 
+/**
+ * @implements Iterator<int, object>
+ */
 final class ArticleAggregator implements Iterator
-{
+{   /**
+    * @var array<int, object> $articles
+    */
     private array $articles = [];
     private int $position = 0;
     private PDO $db;
@@ -21,14 +27,18 @@ final class ArticleAggregator implements Iterator
 
     public function appendDatabase(int $sourceId): void
     {
-        $stmt = $this->db->prepare("SELECT article.name, article.content, source.name AS sourceName FROM article JOIN source ON article.source_id = source.id WHERE source.id = ?");
+        $stmt = $this->db->prepare("SELECT id, source_id, name, content
+        FROM Alltricks.article;
+        WHERE source_id = ?");
+        
+
         $stmt->execute([$sourceId]);
 
         foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
             $this->articles[] = (object) [
                 'name' => $row['name'],
                 'content' => $row['content'],
-                'sourceName' => $row['sourceName']
+                'source_id' => $row['source_id']
             ];
         }
     }
@@ -36,7 +46,7 @@ final class ArticleAggregator implements Iterator
     public function appendRss(string $sourceName, string $feedUrl): void
     {
         $xml = simplexml_load_file($feedUrl);
-
+       
         foreach ($xml->channel->item as $item) {
             $this->articles[] = (object) [
                 'name' => (string) $item->title,

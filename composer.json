@@ -12,5 +12,11 @@
             "email": "bensaadmucret@gmail.com"
         }
     ],
-    "require": {}
+    "require-dev": {
+        "phpstan/phpstan": "^1.10",
+        "symfony/var-dumper": "^6.2"
+    },
+    "require": {
+        "vlucas/phpdotenv": "^5.5"
+    }
 }

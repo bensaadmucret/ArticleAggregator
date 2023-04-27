@@ -47,6 +47,18 @@ table {
 	border-spacing: 0;
 }
 
+h1{
+    font-size: 2em;
+    font-weight: bold;
+    margin-bottom: 0.5em;
+}
+
+h2{
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 0.5em;
+}
+
 
 /* Contenaire */
 
