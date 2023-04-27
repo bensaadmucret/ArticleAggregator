@@ -59,6 +59,13 @@ h2{
     margin-bottom: 0.5em;
 }
 
+.mt-5{
+    margin-top: 3rem;
+}
+
+.p-1{
+    padding: 1rem;
+}
 
 /* Contenaire */
 
@@ -66,7 +73,22 @@ h2{
     display: grid;
     grid-template-columns: repeat(3, 1fr); /* trois colonnes égales */
     grid-gap: 20px; /* espacement entre les éléments */
+    padding: 1rem;
   }
+
+@media screen and (max-width: 768px) {
+    .container {
+      grid-template-columns: repeat(2, 1fr); /* deux colonnes égales */
+    }
+  }
+
+@media screen and (max-width: 480px) {
+    .container {
+      grid-template-columns: 1fr; /* une colonne unique */
+    }
+  }
+
+
 
   
   /* Contenu */ 

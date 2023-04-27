@@ -36,7 +36,7 @@ $aggregator->appendDatabase(4);
 <body>
     <main>
         <section>
-        <h1>Derniers articles</h1>
+        <h1 class="mt-5 p-1">Derniers articles</h1>
            <div class="container">
             <?php foreach ($aggregator as $article): ?>
             <div class="card">
