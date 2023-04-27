@@ -16,14 +16,14 @@ Cette application permet de collecter des articles à partir de deux sources dif
 3.  Ajoutez des articles à partir de flux RSS : `$aggregator->appendRss($sourceName, $feedUrl);`.
 4.  Parcourez les articles avec une boucle `foreach` :
 
-phpCopy code
+```php
 
 `foreach ($aggregator as $article) {
     echo $article->name . "\n";
     echo $article->content . "\n";
     echo $article->sourceName . "\n";
 }` 
-
+```
 ## Configuration
 
 Les variables de configuration sont stockées dans le fichier `.env`. Voici les variables disponibles :
