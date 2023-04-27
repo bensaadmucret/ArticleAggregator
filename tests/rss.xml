@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Mon exemple RSS</title>
+    <link>http://www.example.com/</link>
+    <description>Un exemple de flux RSS</description>
+    <item>
+      <title>Article 1</title>
+      <link>http://www.example.com/article1.html</link>
+      <description>Ceci est l'article 1</description>
+    </item>
+    <item>
+      <title>Article 2</title>
+      <link>http://www.example.com/article2.html</link>
+      <description>Ceci est l'article 2</description>
+    </item>
+  </channel>
+</rss>

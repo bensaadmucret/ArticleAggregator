@@ -11,7 +11,7 @@ use Dotenv\Dotenv;
 
 
 
-final class dbConnexion
+class dbConnexion
 {
     private PDO $db;
  

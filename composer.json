@@ -3,8 +3,10 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Alltricks\\": "app/"
+            "Alltricks\\": "app/",
+            "Tests\\": "tests/"
         }
+        
     },
     "authors": [
         {
