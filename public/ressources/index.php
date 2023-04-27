@@ -5,8 +5,8 @@ use Alltricks\ArticleAggregator;
 // Inclusion de l'autoloader de composer pour charger les classes automatiquement
 require __DIR__ . '/../vendor/autoload.php';
 
-// Initialisation de la classe ArticleAggregator
-$aggregator = new ArticleAggregator('localhost', 'root', '', 'my_database');
+// Initialisation de la classe ArticleAggregato
+$aggregator = new ArticleAggregator();
 
 // Ajout des sources RSS à l'agrégateur
 $aggregator->appendRss('Le Monde', 'https://www.lemonde.fr/rss/une.xml');
@@ -32,12 +32,12 @@ $aggregator->appendDatabase(2);
 
 <body>
     <header>
-        <!-- En-tête du site -->
+    <h1>Derniers articles</h1>
     </header>
 
     <main>
         <section>
-            <h2>Derniers articles</h2>
+           
             <?php foreach ($aggregator as $article): ?>
             <div class="card">
                 <div class="card-header">Titre de la carte</div>
