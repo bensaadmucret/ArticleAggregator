@@ -40,15 +40,14 @@ $aggregator->appendDatabase(4);
            <div class="container">
             <?php foreach ($aggregator as $article): ?>
             <div class="card">
-                <div class="card-header">Titre de la carte</div>
+                <div class="card-header"> <?php echo '<h2>' . $article->name . '</h2>'; ?></div>
                 <div class="card-body">
-                    <?php echo '<h2>' . $article->name . '</h2>'; ?>
                     <?php echo '<p>' . $article->content . '</p>'; ?>
                 </div>
-                <div class="card-footer"><?php echo '<p><em>Source: ' . $article->source_id . '</em></p>'; ?></div>
+                <div class="card-footer"><?php echo '<p><em>Source: ' . ($article->source_id ??  'N/A') . '</em></p>'; ?></div>
             </div>
             <?php endforeach ?>
-            </div>
+            </div> 
         </section>
     </main>
 

@@ -23,7 +23,10 @@ final class dbConnexion
     
         if (file_exists($envFile)) {
             $envVars = parse_ini_file($envFile);
-    
+            
+            /**
+             * @var array<string, string> $envVars
+             */
             foreach ($envVars as $key => $value) {
                 putenv("$key=$value");
                 $_ENV[$key] = $value;
