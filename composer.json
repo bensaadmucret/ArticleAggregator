@@ -1,0 +1,16 @@
+{
+    "name": "ben/app",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Alltricks\\": "app/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Ben",
+            "email": "bensaadmucret@gmail.com"
+        }
+    ],
+    "require": {}
+}
