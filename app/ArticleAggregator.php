@@ -96,21 +96,14 @@ final class ArticleAggregator implements Iterator
         ];
     }
 
-    private function createSource(string $name): string
+    private function createSource(string $name): string | false
     {
         $stmt = $this->db->prepare('INSERT INTO source (name) VALUES (:name)');
         $stmt->bindParam(':name', $name, PDO::PARAM_STR);
         $stmt->execute();
 
-        return $this->db->lastInsertId();
-    }
 
-    private function updateSource(int $sourceId, string $name): void
-    {
-        $stmt = $this->db->prepare('UPDATE source SET name = :name WHERE id = :id');
-        $stmt->bindParam(':name', $name, PDO::PARAM_STR);
-        $stmt->bindParam(':id', $sourceId, PDO::PARAM_INT);
-        $stmt->execute();
+        return $this->db->lastInsertId();
     }
 
     public function deleteSource(int $sourceId): void
@@ -119,27 +112,6 @@ final class ArticleAggregator implements Iterator
         $stmt->bindParam(':id', $sourceId, PDO::PARAM_INT);
         $stmt->execute();
     }
-
-    public function getArticlesBySourceId(int $sourceId): array
-    {
-        $stmt = $this->db->prepare('SELECT * FROM article WHERE source_id = :source_id');
-        $stmt->bindParam(':source_id', $sourceId, PDO::PARAM_INT);
-        $stmt->execute();
-
-        $articles = [];
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $articles[] = (object) [
-                'id' => $row['id'],
-                'name' => $row['name'],
-                'content' => $row['content'],
-                'source_id' => $row['source_id']
-            ];
-        }
-
-        return $articles;
-    }
-
-
 
     public function getSourceIdByName(string $name): ?int
     {

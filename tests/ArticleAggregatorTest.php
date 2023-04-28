@@ -4,59 +4,81 @@ declare(strict_types=1);
 
 namespace Tests;
 
+use PDO;
 use SimpleXMLElement;
 use PHPUnit\Framework\TestCase;
 use Alltricks\ArticleAggregator;
 
-final class FakeDbConnexion
-{
-    public function query(string $sql): array
-    {
-        // Simule une requête à la base de données et retourne des données de test
-        $data = [
-            ['id' => 1, 'name' => 'Article 1', 'content' => 'Lorem ipsum dolor sit amet 1', 'source_id' => 1],
-            ['id' => 2, 'name' => 'Article 2', 'content' => 'Lorem ipsum dolor sit amet 2', 'source_id' => 2]
-        ];
-        return $data;
-    }
-}
+
 
 final class ArticleAggregatorTest extends TestCase
 {
-    /**
-     * @var array<int, object> $articles
-     */
-    private array $articles = [];
 
-    public function setUp(): void
+    private $pdo;
+    private $articleAggregator;
+
+    protected function setUp(): void
     {
-        // Initialisation des articles fictifs
-        $this->articles = [
-            (object) ['id' => 1, 'name' => 'Article RSS 1', 'content' => 'Contenu article RSS 1'],
-            (object) ['id' => 2, 'name' => 'Article RSS 2', 'content' => 'Contenu article RSS 2'],
-            (object) ['id' => 3, 'name' => 'Article RSS 3', 'content' => 'Contenu article RSS 3'],
-            (object) ['id' => 4, 'name' => 'Article RSS 4', 'content' => 'Contenu article RSS 4']
-        ];
+        $this->pdo = new PDO('sqlite::memory:');
+        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $this->createTables();
+        $this->articleAggregator = new ArticleAggregator($this->pdo);
+
+    }
+  
+
+    protected function tearDown(): void
+    {
+        $this->pdo->exec('DROP TABLE IF EXISTS article');
+        $this->pdo->exec('DROP TABLE IF EXISTS source');
+        $this->pdo = null;
     }
 
-    public function testAppendDatabase()
+    private function createTables(): void
     {
-        $dbConnexion = new FakeDbConnexion();
-        $aggregator = new ArticleAggregator($dbConnexion);
+        $this->pdo->exec('CREATE TABLE IF NOT EXISTS article (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT,
+            content TEXT,
+            source_id INTEGER
+        )');
 
-        // Appel de la méthode pour ajouter les articles de la source 1
-        $aggregator->appendDatabase(1);
-
-        // Assertions sur le contenu de l'agrégateur d'articles
-        $this->assertCount(4, $aggregator);
-        $this->assertEquals('Article 1', $aggregator->current()->name);
-        $this->assertEquals('Lorem ipsum dolor sit amet 1', $aggregator->current()->content);
-        $this->assertEquals(1, $aggregator->current()->source_id);
-
-        $aggregator->next();
-        $this->assertEquals('Article 2', $aggregator->current()->name);
-        $this->assertEquals('Lorem ipsum dolor sit amet 2', $aggregator->current()->content);
-        $this->assertEquals(2, $aggregator->current()->source_id);
+        $this->pdo->exec('CREATE TABLE IF NOT EXISTS source (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT
+        )');
     }
+
+    // Instance class ArticleAggregator
+    public function testInstance(): void
+    {
+        $articleAggregator = new ArticleAggregator();
+        $this->assertInstanceOf(ArticleAggregator::class, $articleAggregator);
+    }
+
+
+
+    // les valeurs de la base de données sont bien récupérées
+    public function testGetAllArticlesFromDb(): void
+    {
+        $this->articleAggregator = new ArticleAggregator($this->pdo);
+        $this->articleAggregator->appendRss('Le Monde', 'https://www.lemonde.fr/rss/une.xml');
+        $this->articleAggregator->getAllActicles();
+        $this->assertCount(103, $this->articleAggregator);
+    }
+
+   // erreur dans la récupération des articles
+    public function testGetAllArticlesFromDbError(): void
+    {
+        $this->articleAggregator = new ArticleAggregator($this->pdo);
+        $this->articleAggregator->appendRss('Le Monde', 'https://www.lemonde.fr/rss/une.xml');
+        $this->articleAggregator->getAllActicles();
+        $this->assertNotCount(104, $this->articleAggregator);
+    }
+
+   
+    
 
 }
+
+
