@@ -12,8 +12,8 @@ Cette application permet de collecter des articles à partir de deux sources dif
 ## Utilisation
 
 1.  Créez une instance de la classe `ArticleAggregator` : `$aggregator = new ArticleAggregator();`.
-2.  Ajoutez des articles à partir de la base de données : `$aggregator->appendDatabase($sourceId);`.
-3.  Ajoutez des articles à partir de flux RSS : `$aggregator->appendRss($sourceName, $feedUrl);`.
+2.  Ajoutez des articles à partir de flux RSS : `$aggregator->appendRss($sourceName, $feedUrl);`.
+3.  Ajoutez des articles à partir de la base de données : `$aggregator->getAllActicles();`.
 4.  Parcourez les articles avec une boucle `foreach` :
 
 ```php
