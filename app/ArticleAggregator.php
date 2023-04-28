@@ -6,6 +6,7 @@ namespace Alltricks;
 
 use PDO;
 use Iterator;
+use Exception;
 use Alltricks\dbConnexion;
 
 /**
@@ -25,37 +26,133 @@ final class ArticleAggregator implements Iterator
         $this->db = $dbConnexion->getPdo();
     }
 
-    public function appendDatabase(int $sourceId): void
+
+
+    public function getAllActicles(): void
     {
-        $stmt = $this->db->prepare("SELECT id, source_id, name, content
-        FROM Alltricks.article;
-        WHERE source_id = ?");
+        $stmt = $this->db->prepare('SELECT * FROM article');
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($rows as $row) {
+            $article = (object) [
+                'name' => $row['name'],
+                'content' => $row['content'],
+                'source_id' => $row['source_id']
+            ];
+            $this->articles[] = $article;
+        }
+    }
 
 
-        $stmt->execute([$sourceId]);
+    public function appendRss(string $sourceName, string $rssUrl): void
+    {
+        $rss = simplexml_load_file($rssUrl);
+        if ($rss === false) {
+            throw new Exception('Impossible de charger le flux RSS');
+        }
 
-        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
-            $this->articles[] = (object) [
+        $sourceId = $this->getSourceIdByName($sourceName);
+        if ($sourceId === null) {
+            $sourceId = $this->createSource($sourceName);
+        }
+
+        foreach ($rss->channel->item as $item) {
+            $articleName = $this->db->quote((string) $item->title);
+            $articleContent = $this->db->quote((string) $item->description);
+
+            // Check if article already exists
+            $stmt = $this->db->prepare('SELECT id FROM article WHERE source_id = :sourceId AND name = :name');
+            $stmt->execute(['sourceId' => $sourceId, 'name' => $articleName]);
+            $existingArticle = $stmt->fetch();
+
+            if ($existingArticle) {
+                // Update existing article
+                $stmt = $this->db->prepare('UPDATE article SET content = :content WHERE id = :id');
+                $stmt->execute(['id' => $existingArticle['id'], 'content' => $articleContent]);
+            } else {
+                // Insert new article
+                $stmt = $this->db->prepare('INSERT INTO article (source_id, name, content) VALUES (:sourceId, :name, :content)');
+                $stmt->execute(['sourceId' => $sourceId, 'name' => $articleName, 'content' => $articleContent]);
+            }
+        }
+    }
+
+
+    public function getSourceById(int $sourceId): ?object
+    {
+        $stmt = $this->db->prepare('SELECT * FROM source WHERE id = :id');
+        $stmt->bindParam(':id', $sourceId, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$row) {
+            return null;
+        }
+
+        return (object) [
+            'id' => $row['id'],
+            'name' => $row['name']
+        ];
+    }
+
+    private function createSource(string $name): string
+    {
+        $stmt = $this->db->prepare('INSERT INTO source (name) VALUES (:name)');
+        $stmt->bindParam(':name', $name, PDO::PARAM_STR);
+        $stmt->execute();
+
+        return $this->db->lastInsertId();
+    }
+
+    private function updateSource(int $sourceId, string $name): void
+    {
+        $stmt = $this->db->prepare('UPDATE source SET name = :name WHERE id = :id');
+        $stmt->bindParam(':name', $name, PDO::PARAM_STR);
+        $stmt->bindParam(':id', $sourceId, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+
+    public function deleteSource(int $sourceId): void
+    {
+        $stmt = $this->db->prepare('DELETE FROM source WHERE id = :id');
+        $stmt->bindParam(':id', $sourceId, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+
+    public function getArticlesBySourceId(int $sourceId): array
+    {
+        $stmt = $this->db->prepare('SELECT * FROM article WHERE source_id = :source_id');
+        $stmt->bindParam(':source_id', $sourceId, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $articles = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $articles[] = (object) [
+                'id' => $row['id'],
                 'name' => $row['name'],
                 'content' => $row['content'],
                 'source_id' => $row['source_id']
             ];
         }
+
+        return $articles;
     }
 
-    public function appendRss(string $sourceName, string $feedUrl): void
+
+
+    public function getSourceIdByName(string $name): ?int
     {
-        $xml = simplexml_load_file($feedUrl);
-        if ($xml !== false && isset($xml->channel)) {
-            foreach ($xml->channel->item as $item) {
-                $this->articles[] = (object) [
-                    'name' => (string) $item->title,
-                    'content' => (string) $item->description,
-                    'sourceName' => $sourceName
-                ];
-            }
+        $stmt = $this->db->prepare('SELECT id FROM source WHERE name = :name');
+        $stmt->bindParam(':name', $name, PDO::PARAM_STR);
+        $stmt->execute();
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$row) {
+            return null;
         }
 
+        return (int) $row['id'];
     }
 
     public function rewind(): void

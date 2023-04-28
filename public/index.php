@@ -9,16 +9,14 @@ require __DIR__ . '/../vendor/autoload.php';
 // Initialisation de la classe ArticleAggregato
 $aggregator = new ArticleAggregator();
 
+
 // Ajout des sources RSS à l'agrégateur
 $aggregator->appendRss('Le Monde', 'https://www.lemonde.fr/rss/une.xml');
-$aggregator->appendRss('BBC News', 'https://feeds.bbci.co.uk/news/rss.xml');
-$aggregator->appendRss('CNN', 'http://rss.cnn.com/rss/edition.rss');
+$aggregator->appendRss('Le Figaro', 'http://www.lefigaro.fr/rss/figaro_actualites.xml');
 
-// Ajout des sources de la base de données à l'agrégateur
-$aggregator->appendDatabase(1);
-$aggregator->appendDatabase(2);
-$aggregator->appendDatabase(3);
-$aggregator->appendDatabase(4);
+// récupération des articles
+$aggregator->getAllActicles();
+dump($aggregator);
 
 ?>
 <!DOCTYPE html>
