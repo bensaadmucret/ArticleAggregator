@@ -16,7 +16,7 @@ $aggregator->appendRss('Le Figaro', 'http://www.lefigaro.fr/rss/figaro_actualite
 
 // récupération des articles
 $aggregator->getAllActicles();
-dump($aggregator);
+
 
 ?>
 <!DOCTYPE html>
@@ -28,7 +28,7 @@ dump($aggregator);
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <!-- style -->
     <link rel="stylesheet" href="ressources/style.css">
-    <title>Titre de la page</title>
+    <title>ArticleAggregator</title>
 </head>
 
 <body>
