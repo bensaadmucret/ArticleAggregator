@@ -32,4 +32,3 @@ Les variables de configuration sont stockées dans le fichier `.env`. Voici les 
 -   `DB_NAME` : le nom de la base de données MySQL.
 -   `DB_USER` : le nom d'utilisateur de la base de données MySQL.
 -   `DB_PASSWORD` : le mot de passe de la base de données MySQL.
--   `RSS_FEEDS` : une liste de flux RSS sous forme de chaînes de caractères séparées par des virgules. Chaque chaîne doit être de la forme `nom-de-la-source=url-du-flux`.

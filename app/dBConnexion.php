@@ -9,21 +9,19 @@ use Exception;
 use PDOException;
 use Dotenv\Dotenv;
 
-
-
 class dbConnexion
 {
     private PDO $db;
- 
+
 
 
     public function __construct(string $dbHost = 'localhost', ?string $dbName = null, ?string $dbUser = null, ?string $dbPassword = null)
     {
         $envFile = dirname(__DIR__) . '/.env';
-    
+
         if (file_exists($envFile)) {
             $envVars = parse_ini_file($envFile);
-            
+
             /**
              * @var array<string, string> $envVars
              */

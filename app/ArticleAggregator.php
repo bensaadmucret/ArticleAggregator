@@ -30,7 +30,7 @@ final class ArticleAggregator implements Iterator
         $stmt = $this->db->prepare("SELECT id, source_id, name, content
         FROM Alltricks.article;
         WHERE source_id = ?");
-        
+
 
         $stmt->execute([$sourceId]);
 
@@ -46,14 +46,16 @@ final class ArticleAggregator implements Iterator
     public function appendRss(string $sourceName, string $feedUrl): void
     {
         $xml = simplexml_load_file($feedUrl);
-       
-        foreach ($xml->channel->item as $item) {
-            $this->articles[] = (object) [
-                'name' => (string) $item->title,
-                'content' => (string) $item->description,
-                'sourceName' => $sourceName
-            ];
+        if ($xml !== false && isset($xml->channel)) {
+            foreach ($xml->channel->item as $item) {
+                $this->articles[] = (object) [
+                    'name' => (string) $item->title,
+                    'content' => (string) $item->description,
+                    'sourceName' => $sourceName
+                ];
+            }
         }
+
     }
 
     public function rewind(): void
